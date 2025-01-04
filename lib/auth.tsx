@@ -28,6 +28,13 @@ export const getDecodedToken = (): DecodedToken | null => {
   return null;
 };
 
+export const getToken = (): string | null => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('access_token')
+  }
+  return null
+}
+
 export const isAuthenticated = (): boolean => {
   return getDecodedToken() !== null;
 };

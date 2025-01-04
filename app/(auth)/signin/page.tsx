@@ -10,26 +10,20 @@ import AuthHeader from '../auth-header'
 import AuthImage from '../auth-image'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { login } from '../services/authService';
 
 export default function SignIn() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://20.19.33.27:8000/api/login/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const data = await login(email, password);
 
-      const data = await response.json();
-      console.log(data, "Data-----31----")
-      if (response.ok) {
+      if (data.access) {
         localStorage.setItem('access_token', data.access);
         localStorage.setItem('refresh_token', data.refresh);
         router.push('/dashboard');
@@ -40,6 +34,7 @@ export default function SignIn() {
       setError('An error occurred during login');
     }
   };
+
   return (
     <main className="bg-white dark:bg-gray-900">
 
