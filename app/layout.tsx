@@ -4,6 +4,8 @@ import { Inter } from 'next/font/google'
 import Theme from './theme-provider'
 import AppProvider from './app-provider'
 import { withAuth } from '@/lib/auth'; // Adjust the import path as needed
+import { AlertProvider } from './contexts/alertContext';
+import Alert from '@/components/alert';
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
@@ -25,7 +27,9 @@ export default function RootLayout({
       <body className="font-inter antialiased bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400">
         <Theme>
           <AppProvider>
+            <AlertProvider>
             {children}
+            </AlertProvider>
           </AppProvider>
         </Theme>
       </body>
