@@ -13,7 +13,7 @@ export interface TableProps<T> {
   title?: string
   totalCount?: number
   selectable?: boolean
-  actions?: React.ReactNode
+  actions?: (item: T) => React.ReactNode 
   onSelectionChange?: (selectedIds: any[]) => void
 }
 
@@ -50,7 +50,7 @@ interface TableRowProps<T> {
   selectable?: boolean
   isSelected?: boolean
   onCheckboxChange?: (id: any, checked: boolean) => void
-  actions?: React.ReactNode
+  actions?: (item: T) => React.ReactNode 
 }
 
 function TableRow<T extends { id: any }>({ 
@@ -110,7 +110,7 @@ function TableRow<T extends { id: any }>({
       {actions && (
         <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
           <div className="space-x-1">
-            {actions}
+            {actions(item)}
           </div>
         </td>
       )}

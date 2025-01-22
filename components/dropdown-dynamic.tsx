@@ -13,54 +13,23 @@ import {
 } from '@headlessui/react'
 import { useSelectedItems } from '@/app/selected-items-context';
 import ModalBlank from './modal-blank';
-import Link from 'next/link';
 import { AgentInterface } from '@/app/(auth)/services/authService';
+import FeedbackModal from './feedback-modal';
 interface OptionInterface {
     id: number;
     value: string;
 }
 
 export default function DropdownFull(
-    { agents, onAgentSelect, options, onActionClick }: { agents: AgentInterface[], onAgentSelect: any, options: any, onActionClick:any }) {
+    { options, onDropdownItemSelect }: {  options: any, onDropdownItemSelect:any }) {
     const { selectedItems } = useSelectedItems()
     const [selected, setSelected] = useState<number>(0)
-    const [dangerModalOpen, setDangerModalOpen] = useState(false)
-    const [isOpen, setIsOpen] = useState(false)
-    const [searchQuery, setSearchQuery] = useState('');
-    const [filteredAgents, setFilteredAgents] = useState(agents);
-    const [selectedAgentId, setSelectedAgentId] = useState(null);
 
 
     const handleSelect = (option: OptionInterface) => {
-        if (option.id === 0) {
-            setDangerModalOpen(true);
-        }
-        else if (option.id === 1 || option.id === 2) {
-            setIsOpen(true)
-        }
+        onDropdownItemSelect(option)
     }
 
-    const handleAgentSelect = (id: any) => {
-        setSelectedAgentId(id);
-        onAgentSelect(id);
-    };
-
-    const handleActionClick = (actor: string) => {
-        onActionClick(actor)
-        setIsOpen(false);
-        
-    };
-
-
-    const handleSearchChange = (e: any) => {
-        const query = e.target.value.toLowerCase();
-        setSearchQuery(query);
-        setFilteredAgents(
-            agents.filter((agent) =>
-                agent.email.toLowerCase().includes(query)
-            )
-        );
-    };
     return (
         <div className={`${selectedItems.length < 1 && 'hidden'}`}>
             <div className="flex items-center">
@@ -108,36 +77,8 @@ export default function DropdownFull(
                     )}
                 </Menu>
             </div>
-            <ModalBlank isOpen={dangerModalOpen} setIsOpen={setDangerModalOpen}>
-                <div className="p-5 flex space-x-4">
-                    {/* Icon */}
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 bg-gray-100 dark:bg-gray-700">
-                        <svg className="shrink-0 fill-current text-red-500" width="16" height="16" viewBox="0 0 16 16">
-                            <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 12c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm1-3H7V4h2v5z" />
-                        </svg>
-                    </div>
-                    {/* Content */}
-                    <div>
-                        {/* Modal header */}
-                        <div className="mb-2">
-                            <div className="text-lg font-semibold text-gray-800 dark:text-gray-100">`Delete {selectedItems.length} Item(s)?`</div>
-                        </div>
-                        {/* Modal content */}
-                        <div className="text-sm mb-10">
-                            <div className="space-y-2">
-                                <p>Deleting this item(s) will permanently remove them from your records and cannot be undone.
-                                    Please make sure you want to proceed with this action before confirming</p>
-                            </div>
-                        </div>
-                        {/* Modal footer */}
-                        <div className="flex flex-wrap justify-end space-x-2">
-                            <button className="btn-sm border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300" onClick={() => { setDangerModalOpen(false) }}>Cancel</button>
-                            <button className="btn-sm bg-red-500 hover:bg-red-600 text-white" onClick={() => { setDangerModalOpen(false) }}>Yes, Delete it</button>
-                        </div>
-                    </div>
-                </div>
-            </ModalBlank>
-            <Transition appear show={isOpen}>
+
+            {/* <Transition appear show={isOpen}>
                 <Dialog as="div" onClose={() => setIsOpen(false)}>
                     <TransitionChild
                         as="div"
@@ -161,7 +102,6 @@ export default function DropdownFull(
                         leaveTo="opacity-0 translate-y-4"
                     >
                         <DialogPanel className="bg-white dark:bg-gray-800 border border-transparent dark:border-gray-700/60 overflow-auto max-w-2xl w-full max-h-full rounded-lg shadow-lg">
-                            {/* Search form */}
                             <form className="border-b border-gray-200 dark:border-gray-700/60">
                                 <div className="relative">
                                     <label htmlFor="search-modal" className="sr-only">Search</label>
@@ -182,7 +122,6 @@ export default function DropdownFull(
                                 </div>
                             </form>
                             <div className="py-4 px-2">
-                                {/* Recent searches */}
                                 <div className="mb-3 last:mb-0">
                                     <div className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase px-2 mb-2">Recent searches</div>
                                     <ul className="text-sm">
@@ -201,7 +140,6 @@ export default function DropdownFull(
                                         ))}
                                     </ul>
                                 </div>
-                                {/* Recent pages */}
                                 <div className="mb-3 mt-3 last:mb-0">
                                     <div className="flex flex-wrap justify-end space-x-2">
                                         <button className="btn-sm border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-300" onClick={() => { setIsOpen(false) }}>Cancel</button>
@@ -216,7 +154,7 @@ export default function DropdownFull(
                         </DialogPanel>
                     </TransitionChild>
                 </Dialog>
-            </Transition>
+            </Transition> */}
         </div>
     )
 }

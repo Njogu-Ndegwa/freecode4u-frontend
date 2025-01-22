@@ -86,7 +86,7 @@ export const useMenuVisibility = () => {
 
   const menuPermissions = {
     SUPER_ADMIN: ['dashboard', 'ecommerce', 'community', 'finance', 'job', 'tasks', 'settings'],
-    DISTRIBUTOR: ['dashboard', 'ecommerce', 'tasks'],
+    DISTRIBUTOR: ['dashboard', 'ecommerce', 'tasks', 'inventory'],
     CUSTOMER: ['dashboard', 'ecommerce'],
   };
   type UserType = keyof typeof menuPermissions;

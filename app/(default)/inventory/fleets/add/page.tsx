@@ -1,30 +1,63 @@
 'use client'
 // components/FormLibrary.tsx
+import { useEffect } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useFleetForm } from './useFleetForm';
+import { getDistributorAgents, } from '@/app/(auth)/services/authService';
+import { AgentInterface } from '@/app/(auth)/services/authService';
+import { useAlert } from '@/app/contexts/alertContext';
+import { FleetInterface } from '../../types';
 
+interface FormLibraryProps {
+  editData?: FleetInterface | null; // Add prop for edit data
+}
 
-// export const metadata = {
-//   title: 'Form - Mosaic',
-//   description: 'Page description',
-// };
-
-export default function FormLibrary() {
+export default function FormLibrary({ editData }: FormLibraryProps) {
+  const [agents, setAgents] = useState<AgentInterface[]>([])
+  const [loadingAgents, setLoadingAgents] = useState(true);
   const router = useRouter();
+  const [isEditing] = useState(!!editData); // Determine if in edit mode
+  const { alert } = useAlert()
+
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
+    name: editData?.name || '',
+    description: editData?.description || '',
+    assigned_agent_id: editData?.assigned_agent?.id?.toString() || ''
   });
+
+
+  useEffect(() => {
+    const fetchAgents = async () => {
+      try {
+        const data = await getDistributorAgents();
+        setAgents(data);
+      } catch (err) {
+        console.error('Failed to fetch agents:', err);
+      } finally {
+        setLoadingAgents(false);
+      }
+    };
+
+    fetchAgents();
+  }, [editData]);
 
   const { handleSubmit, isLoading, error } = useFleetForm({
+    isEdit: isEditing,
+    fleetId: editData?.id,
     onSuccess: () => {
       router.push('/inventory/fleets'); // Navigate to fleets list after success
+      alert({ text: `Fleet ${isEditing ? 'Updated' : 'Created'} Successfully`, type: "success" })
     },
+    onError: () => {
+      alert({ text: `There was a problem ${isEditing ? 'Updating' : 'Creating'} the Fleet `, type: "error" })
+    }
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -48,20 +81,20 @@ export default function FormLibrary() {
           <span>Back</span>
         </button>
         <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">
-          Create a Fleet
+          {isEditing ? 'Edit Fleet' : 'Create a Fleet'}
         </h1>
       </div>
 
       <form onSubmit={onSubmit}>
         {error && (
-        //   <Alert variant="destructive" className="mb-6">
-        //     <AlertDescription>{error}</AlertDescription>
-        //   </Alert>
-        <div>Error!!</div>
+          //   <Alert variant="destructive" className="mb-6">
+          //     <AlertDescription>{error}</AlertDescription>
+          //   </Alert>
+          <div>Error!!</div>
         )}
 
         <div className="space-y-8 mt-8">
-          <div className="grid gap-5 md:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-2">
             <div>
               <div>
                 <label className="block text-sm font-medium mb-1" htmlFor="name">
@@ -95,17 +128,41 @@ export default function FormLibrary() {
                 />
               </div>
             </div>
+            <div>
+              <div>
+                <label className="block text-sm font-medium mb-1" htmlFor="description">
+                  Fleet Description
+                </label>
+                <select
+                  id="assigned_agent"
+                  name="assigned_agent_id"  // Match the formData property name
+                  className="form-select w-full"
+                  value={formData.assigned_agent_id}
+                  onChange={handleInputChange}  // Use the same handler
+                  required
+                  disabled={loadingAgents}
+                >
+                  <option value="">Select an agent</option>
+                  {agents.map((agent) => (
+                    <option key={agent.id} value={agent.id}>
+                      {agent.email}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
+            </div>
             <div>
               <div className="mt-[25px]">
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className={`btn bg-green-500 hover:bg-green-600 text-white w-full ${
-                    isLoading ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
+                  className={`btn bg-green-500 hover:bg-green-600 text-white w-full ${isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
                 >
-                  {isLoading ? 'Creating...' : 'Create Inventory'}
+                  {isLoading
+                    ? `${isEditing ? 'Updating...' : 'Creating...'}`
+                    : `${isEditing ? 'Update' : 'Create'} Fleet`}
                 </button>
               </div>
             </div>

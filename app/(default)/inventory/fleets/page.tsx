@@ -3,11 +3,8 @@
 import { useState, useEffect } from 'react'
 import Table from '@/components/table/table'
 import { FleetInterface } from '../types'
-import { Pencil, Trash2, Plus, MoreHorizontal } from 'lucide-react'
-// import { Alert, AlertDescription } from '@/components/ui/alert'
 import { getFleets, reassignFleetToAgent, assignFleetToAgent } from '../services/inventoryService'
-import { TableColumn } from '@/components/table/table'
-import { format } from 'date-fns';
+
 import Link from 'next/link';
 import DynamicDropdown from '@/components/dropdown-dynamic';
 import { getDistributorAgents, } from '@/app/(auth)/services/authService';
@@ -17,9 +14,12 @@ import { useSelectedItems } from '@/app/selected-items-context';
 import DateSelect from '@/components/date-select';
 import FilterButton from '@/components/dropdown-filter';
 import { SelectedItemsProvider } from '@/app/selected-items-context';
-import Banner from '@/components/banner';
-import Alert from '@/components/alert'
-import { useAlert } from '@/app/contexts/alertContext'
+import Alert from '@/components/alert';
+import { useAlert } from '@/app/contexts/alertContext';
+import FeedbackModal from '@/components/feedback-modal';
+import { columns, dropdownOptions } from "./tableColumns";
+import { actions } from './tableActions';
+import { SearchableListModal } from '@/components/seachable-list-modal';
 export default function FleetTableWrapper() {
   return (
     <SelectedItemsProvider>
@@ -36,174 +36,116 @@ function FleetTable() {
   const { setSelectedItems, selectedItems } = useSelectedItems()
   const [selectedAgentId, setSelectedAgentId] = useState<number | null>(null);
   const [isBannerOpen, setBannerOpen] = useState(false)
-  const {alert} = useAlert()
+  const [dangerModalOpen, setDangerModalOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const { alert } = useAlert()
+
+  const fetchFleets = async () => {
+    try {
+      const data = await getFleets()
+      setFleets(data)
+    } catch (err) {
+      setError('Failed to fetch fleets')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchAgents = async () => {
+    try {
+      const data = await getDistributorAgents()
+      setAgents(data)
+    }
+    catch (err) {
+
+    }
+    finally {
+
+    }
+
+  }
+
   useEffect(() => {
-    const fetchFleets = async () => {
-      try {
-        const data = await getFleets()
-        setFleets(data)
-      } catch (err) {
-        setError('Failed to fetch fleets')
-      } finally {
-        setLoading(false)
-      }
-    }
-    const fetchAgents = async () => {
-      try {
-        const data = await getDistributorAgents()
-        setAgents(data)
-      }
-      catch (err) {
-
-      }
-      finally {
-
-      }
-
-    }
     fetchAgents()
-
     fetchFleets()
+
   }, [])
 
-  const columns: TableColumn<FleetInterface>[] = [
-    {
-      header: 'ID',
-      accessor: 'id' as keyof FleetInterface,
-      cellRenderer: (value: unknown, item: FleetInterface) => (
-        <div className="font-medium text-sky-600">
-          {String(value)}
-        </div>
-      )
-    },
-    {
-      header: 'Name',
-      accessor: 'name' as keyof FleetInterface,
-      cellRenderer: (value: unknown, item: FleetInterface) => (
-        <div className="font-medium text-gray-800 dark:text-gray-100">
-          {String(value)}
-        </div>
-      )
-    },
-    {
-      header: 'Description',
-      accessor: 'description' as keyof FleetInterface,
-      cellRenderer: (value: unknown, item: FleetInterface) => (
-        <div className="max-w-md truncate">{String(value)}</div>
-      )
-    },
-    {
-      header: 'Assigned Agent',
-      accessor: 'assigned_agent.email' as keyof FleetInterface,
-      cellRenderer: (value: unknown, item: FleetInterface) => (
-        <div className="max-w-md truncate">
-          {item.assigned_agent ? item.assigned_agent.email : '-'}
-        </div>
-      )
-    },
-    {
-      header: 'Created At',
-      accessor: 'created_at' as keyof FleetInterface,
-      cellRenderer: (value: unknown, item: FleetInterface) => {
-        const formattedDate = format(new Date(String(value)), 'MMM dd, yyyy HH:mm:ss');
-        return <div className="max-w-md truncate">{formattedDate}</div>;
-      }
-    },
-    {
-      header: 'Updated At',
-      accessor: 'updated_at' as keyof FleetInterface,
-      cellRenderer: (value: unknown, item: FleetInterface) => {
-        const formattedDate = format(new Date(String(value)), 'MMM dd, yyyy HH:mm:ss');
-        return <div className="max-w-md truncate">{formattedDate}</div>;
-      }
-    }
-  ]
-
-  const actions = (
-    <>
-      <button
-        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-        onClick={() => console.log('Edit clicked')}
-      >
-        <Pencil className="w-4 h-4 text-gray-500" />
-        <span className="sr-only">Edit</span>
-      </button>
-      <button
-        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-        onClick={() => console.log('Delete clicked')}
-      >
-        <Trash2 className="w-4 h-4 text-red-500" />
-        <span className="sr-only">Delete</span>
-      </button>
-      <button
-        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-        onClick={() => console.log('More options clicked')}
-      >
-        <MoreHorizontal className="w-4 h-4 text-gray-500" />
-        <span className="sr-only">More options</span>
-      </button>
-    </>
-  )
 
   const handleSelectionChange = (selectedIds: number[]) => {
     setSelectedItems(selectedIds)
   }
 
-  const handleAgentSelect = (id: number) => {
-    setSelectedAgentId(id); // Just set the ID, no actor here
+  const handleAgentSelect = (agent: any) => {
+    setSelectedAgentId(agent.id); // Just set the ID, no actor here
+  };
+
+  const handleDropdownItemSelect = (option: any) => {
+    setSelectedOption(option.id)
+    if (option.id === 0) {
+      setDangerModalOpen(true);
+    } else if (option.id === 1 || option.id === 2) {
+      setIsOpen(true)
+    }
+  }
+  
+  const loadData = async () => {
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    fetchFleets();
+    setSelectedItems([]);
   };
 
   const handleActionClick = async (actor: string) => {
     if (selectedAgentId) {
-      // setBannerOpen(true)
       if (actor === "assign") {
-        const response = await assignFleetToAgent({ agent_id: selectedAgentId, fleet_ids: selectedItems })
+        assignFleetToAgent({ agent_id: selectedAgentId, fleet_ids: selectedItems })
         alert({ text: "Fleet Assignment started Successfully", type: "success" })
+        loadData()
       } else if (actor === "reAssign") {
-        const response = await reassignFleetToAgent({ new_agent_id: selectedAgentId, fleet_ids: selectedItems })
+        await reassignFleetToAgent({ new_agent_id: selectedAgentId, fleet_ids: selectedItems })
         alert({ text: "Fleet ReAssignment started Successfully", type: "success" })
+        loadData()
       }
     } else {
       alert({ text: "Select an Agent First", type: "error" })
     }
   };
 
+  const filteredAgents = agents.filter(agent =>
+    agent.email.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
   if (loading) {
     return <div className="p-8 text-center">Loading Fleets...</div>
   }
 
-  //   if (error) {
-  //     return (
-  //       <Alert variant="destructive">
-  //         <AlertDescription>{error}</AlertDescription>
-  //       </Alert>
-  //     )
-  //   }
-  const options = [
-    {
-      id: 0,
-      value: 'Delete'
-    },
-    {
-      id: 1,
-      value: 'Assign to Agent'
-    },
-    {
-      id: 2,
-      value: 'Re-assign Agent'
-    }
-  ]
 
-  console.log(agents, "Agents")
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-[96rem] mx-auto">
-      <Alert
-        type="success"
-        open={isBannerOpen}
-        setOpen={setBannerOpen}
-      >
-        Action completed successfully!
-      </Alert>
+      <FeedbackModal
+        isOpen={dangerModalOpen}
+        setIsOpen={setDangerModalOpen}
+        variant="danger"
+        title={`Delete ${1} customer?`}
+        content="Semper eget duis at tellus at urna condimentum mattis pellentesque lacus suspendisse faucibus interdum."
+        confirmButtonLabel="Yes, Delete it"
+      />
+      <SearchableListModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        title="Select an Agent"
+        items={filteredAgents}
+        searchPlaceholder="Search for an agent..."
+        searchValue={searchQuery}
+        onSearch={setSearchQuery}
+        renderItem={(agent) => agent.email}
+        onSelect={handleAgentSelect}
+        selectedItemId={selectedAgentId}
+        actionLabel={selectedOption === 1 ? 'Assign Item' : 'Re-assign Item'}
+        onAction={() => handleActionClick(selectedOption === 1 ? 'assign' : 'reAssign')}
+      />
       {/* Header section */}
       <div className="sm:flex sm:justify-between sm:items-center mb-5">
         <div className="mb-4 sm:mb-0">
@@ -255,7 +197,7 @@ function FleetTable() {
         {/* Right side */}
         <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
           {/* Delete button */}
-          <DynamicDropdown agents={agents} onAgentSelect={handleAgentSelect} onActionClick={handleActionClick} options={options} />
+          <DynamicDropdown options={dropdownOptions} onDropdownItemSelect={handleDropdownItemSelect} />
           {/* Dropdown */}
           <DateSelect />
           {/* Filter button */}
@@ -270,7 +212,7 @@ function FleetTable() {
           columns={columns}
           totalCount={fleet.length}
           selectable
-          actions={actions}
+          actions={(row) => actions({ row, onDelete: loadData })}
           onSelectionChange={handleSelectionChange}
         />
       </div>

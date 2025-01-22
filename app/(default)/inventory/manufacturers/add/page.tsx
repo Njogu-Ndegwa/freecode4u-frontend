@@ -4,24 +4,38 @@ import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useManufacturerForm } from './useManufacturersForm';
-
+import { ManufacturerInterface } from '../../types';
+import { useAlert } from '@/app/contexts/alertContext';
 
 // export const metadata = {
 //   title: 'Form - Mosaic',
 //   description: 'Page description',
 // };
 
-export default function FormLibrary() {
+interface FormLibraryProps {
+  editData?: ManufacturerInterface | null; // Add prop for edit data
+}
+
+
+export default function FormLibrary({ editData }: FormLibraryProps) {
   const router = useRouter();
+  const [isEditing] = useState(!!editData);
+  const { alert } = useAlert()
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
+    name: editData?.name || '',
+    description: editData?.description || '',
   });
 
   const { handleSubmit, isLoading, error } = useManufacturerForm({
+    isEdit: isEditing,
+    manufacturerId: editData?.id,
     onSuccess: () => {
       router.push('/inventory/manufacturers'); // Navigate to manufacturers list after success
+      alert({ text: `Manufacturer ${isEditing ? 'Updated' : 'Created'} Successfully`, type: "success" })
     },
+    onError: () => {
+      alert({ text: `There was a problem ${isEditing ? 'Updating' : 'Creating'} the Manufacturer `, type: "error" })
+    }
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,7 +119,9 @@ export default function FormLibrary() {
                     isLoading ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
                 >
-                  {isLoading ? 'Creating...' : 'Create Inventory'}
+                               {isLoading
+                    ? `${isEditing ? 'Updating...' : 'Creating...'}`
+                    : `${isEditing ? 'Update' : 'Create'} Manufacturer`}
                 </button>
               </div>
             </div>
