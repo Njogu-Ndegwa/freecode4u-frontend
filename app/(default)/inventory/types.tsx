@@ -37,6 +37,8 @@ export interface ReassignFleetDataInterface {
   fleet_ids: number[]
 }
 
+
+
 export interface AssignFleetDataInterface {
   agent_id: number
   fleet_ids: number[]
@@ -60,4 +62,55 @@ export interface ReassignmentResponseInterface {
 export interface AssignmentResponseInterface {
   assigned_fleet_ids: AssignmentItem[];
   errors: any[]; // or string[] depending on what type of errors you expect
+}
+
+// Items
+export interface PaymentPlanInterface {
+  id: number;
+  name: string;
+  total_amount: string;
+  interval_type: string;
+  interval_amount: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CustomerInterface {
+  id: number;
+  name: string;
+  email: string;
+  phone_number: string;
+  created_at: string;
+  distributor: number;
+  assigned_agent: number;
+}
+
+export interface ItemInterface {
+  id: number;
+  serial_number: string;
+  manufacturers: ManufacturerInterface | null;
+  fleet: FleetInterface | null;
+  encoder_state: any; // Replace with specific type if available
+  status: 'pending' | 'partially_paid' | 'fully_paid';
+  payment_plan: PaymentPlanInterface | null;
+  created_at: string;
+  updated_at: string;
+  customer: CustomerInterface | null;
+}
+
+export type TokenType = 'ADD_TIME' | 'SET_TIME' | 'DISABLE_PAYG' | 'COUNTER_SYNC';
+
+export interface ItemFormData {
+  serial_number: string;
+  manufacturers?: number | null;
+  fleet?: number | null;
+  encoder_state?: {
+    token_type?: TokenType;
+    token_value?: string;
+    secret_key?: string;
+    starting_code?: string;
+    max_count?: number;
+    token?: string;
+  };
+  // Add other fields as needed
 }

@@ -7,7 +7,9 @@ import {
   ReassignFleetDataInterface,
   AssignFleetDataInterface,
   ReassignmentResponseInterface,
-  AssignmentResponseInterface
+  AssignmentResponseInterface,
+  ItemInterface,
+  ItemFormData
 
 } from "../types";
 import { authenticatedFetch } from "@/lib/utils";
@@ -147,5 +149,53 @@ export const deleteManufacturer = async (id: number): Promise<{ message: string 
   } catch (error) {
     console.error('Error deleting Manufacturer:', error);
     throw new Error('An error occurred while deleting manufacturer');
+  }
+};
+
+// Items//
+
+export const getItems = async (): Promise<ItemInterface[]> => {
+  try {
+    return await authenticatedFetch<ItemInterface[]>('/api/items/')
+  } catch (error) {
+    console.error('Error fetching items:', error)
+    throw new Error('An error occurred while fetching items')
+  }
+};
+
+
+export const createItem = async (data: ItemFormData): Promise<ItemInterface> => {
+  try {
+    return await authenticatedFetch<ItemInterface>('/api/items/', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  } catch (error) {
+    console.error('Error creating item:', error);
+    throw new Error('An error occurred while creating item');
+  }
+};
+
+// Optional: Add updateItem service
+export const updateItem = async (id: number, data: ItemFormData): Promise<ItemInterface> => {
+  try {
+    return await authenticatedFetch<ItemInterface>(`/api/items/${id}/`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  } catch (error) {
+    console.error('Error updating item:', error);
+    throw new Error('An error occurred while updating item');
+  }
+};
+
+export const getItemById = async (id: string): Promise<ItemInterface> => {
+  try {
+    if (!id) throw new Error('No item ID provided');
+    
+    return await authenticatedFetch<ItemInterface>(`/api/items/${id}`);
+  } catch (error) {
+    console.error(`Error fetching item with ID ${id}:`, error);
+    throw new Error('An error occurred while fetching item by ID');
   }
 };
