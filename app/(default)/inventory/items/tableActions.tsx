@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Pencil, Trash2, MoreHorizontal } from 'lucide-react';
 import FeedbackModal from '@/components/feedback-modal';
-import { deleteFleet } from '../services/inventoryService';
+import { deleteItem } from '../services/inventoryService';
 import { useAlert } from '@/app/contexts/alertContext';
 interface ActionProps {
     row: any; // Should match your FleetInterface type
@@ -29,7 +29,7 @@ export const actions = ({ row, onDelete }: ActionProps) => {
     const handleConfirmDelete = async () => {
         try {
             // Assuming you have access to the fleet ID (from state/props)
-            const response = await deleteFleet(row.id);
+            const response = await deleteItem(row.id);
 
             // Show success feedback
             alert({ text: response.message, type: "success" })

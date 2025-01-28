@@ -21,7 +21,7 @@ export default function AccountSettings() {
         <div className="flex flex-col md:flex-row md:-mr-px">
 
           <SettingsSidebar />
-          <AccountPanel />
+          {/* <AccountPanel /> */}
 
         </div>
       </div>

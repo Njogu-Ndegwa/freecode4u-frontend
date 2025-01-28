@@ -9,8 +9,21 @@ import {
   ReassignmentResponseInterface,
   AssignmentResponseInterface,
   ItemInterface,
-  ItemFormData
-
+  ItemFormData,
+  ItemAssignmentResponseInterface,
+  ItemReAssignmentResponseInterface,
+  AssignItemsToFleetData,
+  AssignItemToCustomerData,
+  AssignPaymentPlanToItemData,
+  CustomerAssignmentResponse,
+  PaymentPlanAssignmentResponse,
+  PaymentPlanInterface,
+  CustomerInterface,
+  GenerateTokenRequest,
+  GenerateTokenResponse,
+  GeneratedCodeResponse,
+  PaymentResponseInterface
+  
 } from "../types";
 import { authenticatedFetch } from "@/lib/utils";
 
@@ -197,5 +210,117 @@ export const getItemById = async (id: string): Promise<ItemInterface> => {
   } catch (error) {
     console.error(`Error fetching item with ID ${id}:`, error);
     throw new Error('An error occurred while fetching item by ID');
+  }
+};
+
+
+export const assignItemToFleet = async (data: AssignItemsToFleetData): Promise<ItemAssignmentResponseInterface> => {
+  try {
+    return await authenticatedFetch<ItemAssignmentResponseInterface>('/api/items/assign_fleet/', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+  catch (error) {
+    console.error('Error Assigning Item to Fleet:', error)
+    throw new Error('An error occurred while Assigning Item to fleet')
+  }
+}
+
+export const reAssignItemToFleet = async (data: AssignItemsToFleetData): Promise<ItemReAssignmentResponseInterface> => {
+  try {
+    return await authenticatedFetch<ItemReAssignmentResponseInterface>('/api/items/reassign_fleet/', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+  catch (error) {
+    console.error('Error Assigning Item to Fleet:', error)
+    throw new Error('An error occurred while Assigning Item to fleet')
+  }
+}
+
+export const deleteItem = async (id: number): Promise<{ message: string }> => {
+  try {
+    return await authenticatedFetch<{ message: string }>(`/api/items/${id}/`, {
+      method: 'DELETE',
+    });
+  } catch (error) {
+    console.error('Error deleting Item:', error);
+    throw new Error('An error occurred while deleting item');
+  }
+};
+
+export const assignItemToCustomer = async (data: AssignItemToCustomerData): Promise<CustomerAssignmentResponse> => {
+  try {
+    return await authenticatedFetch<CustomerAssignmentResponse>('/api/items/assign_customer/', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  } catch (error) {
+    console.error('Error Assigning Item to Customer:', error);
+    throw new Error('An error occurred while assigning item to customer');
+  }
+};
+
+
+export const assignPaymentPlanToItem = async (data: AssignPaymentPlanToItemData): Promise<PaymentPlanAssignmentResponse> => {
+  try {
+    return await authenticatedFetch<PaymentPlanAssignmentResponse>('/api/items/assign_payment_plan/', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  } catch (error) {
+    console.error('Error Assigning Payment Plan to Item:', error);
+    throw new Error('An error occurred while assigning payment plan to item');
+  }
+};
+
+export const getPaymentPlans = async (): Promise<PaymentPlanInterface[]> => {
+  try {
+    return await authenticatedFetch<PaymentPlanInterface[]>('/api/payment_plans/');
+  } catch (error) {
+    console.error('Error fetching payment plans:', error);
+    throw new Error('An error occurred while fetching payment plans');
+  }
+};
+
+export const getCustomers = async (): Promise<CustomerInterface[]> => {
+  try {
+    return await authenticatedFetch<CustomerInterface[]>('/api/customers/');
+  } catch (error) {
+    console.error('Error fetching customers:', error);
+    throw new Error('An error occurred while fetching customers');
+  }
+};
+
+
+export const generateToken = async (data: GenerateTokenRequest): Promise<GenerateTokenResponse> => {
+  try {
+    return await authenticatedFetch<GenerateTokenResponse>('/api/item/generate_token/', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  } catch (error) {
+    console.error('Error generating token:', error);
+    throw new Error('Failed to generate token');
+  }
+};
+
+export const generateItemCode = async (itemId: string): Promise<GeneratedCodeResponse[]> => {
+  try {
+    return await authenticatedFetch<GeneratedCodeResponse[]>(`/api/items/${itemId}/generated_codes/`);
+  } catch (error) {
+    console.error('Error fetching tokens:', error);
+    throw new Error('An error occurred while fetching tokens');
+  }
+};
+
+export const fetchItemPayments = async (itemId: string): Promise<PaymentResponseInterface[]> => {
+  try {
+    return await authenticatedFetch<PaymentResponseInterface[]>(`/api/items/${itemId}/payments/`);
+  } catch (error) {
+    console.error('Error fetching payments:', error);
+    throw new Error('An error occurred while fetching payments');
   }
 };

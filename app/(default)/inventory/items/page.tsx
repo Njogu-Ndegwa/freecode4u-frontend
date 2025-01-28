@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Table from '@/components/table/table'
 import { FleetInterface, ItemInterface } from '../types'
-import { getFleets, getItems, reassignFleetToAgent, assignFleetToAgent } from '../services/inventoryService'
+import { getFleets, getItems, reAssignItemToFleet, assignItemToFleet } from '../services/inventoryService'
 
 import Link from 'next/link';
 import DynamicDropdown from '@/components/dropdown-dynamic';
@@ -29,13 +29,13 @@ export default function ItemTableWrapper() {
 }
 
 function ItemTable() {
-  const [fleet, setFleets] = useState<FleetInterface[]>([])
+  const [fleets, setFleets] = useState<FleetInterface[]>([])
   const [items, setItems] = useState<ItemInterface[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [agents, setAgents] = useState<AgentInterface[]>([])
   const { setSelectedItems, selectedItems } = useSelectedItems()
-  const [selectedAgentId, setSelectedAgentId] = useState<number | null>(null);
+  const [selectedFleetId, setSelectedFleetId] = useState<number | null>(null);
   const [isBannerOpen, setBannerOpen] = useState(false)
   const [dangerModalOpen, setDangerModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('');
@@ -76,8 +76,8 @@ function ItemTable() {
     setSelectedItems(selectedIds)
   }
 
-  const handleAgentSelect = (agent: any) => {
-    setSelectedAgentId(agent.id); // Just set the ID, no actor here
+  const handleFleetSelect = (agent: any) => {
+    setSelectedFleetId(agent.id); // Just set the ID, no actor here
   };
 
   const handleDropdownItemSelect = (option: any) => {
@@ -96,14 +96,14 @@ function ItemTable() {
   };
 
   const handleActionClick = async (actor: string) => {
-    if (selectedAgentId) {
+    if (selectedFleetId) {
       if (actor === "assign") {
-        assignFleetToAgent({ agent_id: selectedAgentId, fleet_ids: selectedItems })
-        alert({ text: "Fleet Assignment started Successfully", type: "success" })
+        assignItemToFleet({ fleet_id: selectedFleetId, item_ids: selectedItems })
+        alert({ text: "Item Assignment started Successfully", type: "success" })
         loadData()
       } else if (actor === "reAssign") {
-        await reassignFleetToAgent({ new_agent_id: selectedAgentId, fleet_ids: selectedItems })
-        alert({ text: "Fleet ReAssignment started Successfully", type: "success" })
+        await reAssignItemToFleet({ fleet_id: selectedFleetId, item_ids: selectedItems })
+        alert({ text: "Item ReAssignment started Successfully", type: "success" })
         loadData()
       }
     } else {
@@ -111,8 +111,8 @@ function ItemTable() {
     }
   };
 
-  const filteredAgents = agents.filter(agent =>
-    agent.email.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredFleets = fleets.filter(fleet =>
+    fleet.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   if (loading) {
@@ -126,21 +126,21 @@ function ItemTable() {
         isOpen={dangerModalOpen}
         setIsOpen={setDangerModalOpen}
         variant="danger"
-        title={`Delete ${1} customer?`}
+        title={`Delete ${1} item?`}
         content="Semper eget duis at tellus at urna condimentum mattis pellentesque lacus suspendisse faucibus interdum."
         confirmButtonLabel="Yes, Delete it"
       />
       <SearchableListModal
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        title="Select an Agent"
-        items={filteredAgents}
-        searchPlaceholder="Search for an agent..."
+        title="Select a Fleet"
+        items={filteredFleets}
+        searchPlaceholder="Search for a fleet..."
         searchValue={searchQuery}
         onSearch={setSearchQuery}
-        renderItem={(agent) => agent.email}
-        onSelect={handleAgentSelect}
-        selectedItemId={selectedAgentId}
+        renderItem={(fleet) => fleet.name}
+        onSelect={handleFleetSelect}
+        selectedItemId={selectedFleetId}
         actionLabel={selectedOption === 1 ? 'Assign Item' : 'Re-assign Item'}
         onAction={() => handleActionClick(selectedOption === 1 ? 'assign' : 'reAssign')}
       />
@@ -208,7 +208,7 @@ function ItemTable() {
         <Table
           data={items}
           columns={columns}
-          totalCount={fleet.length}
+          totalCount={fleets.length}
           selectable
           actions={(row) => actions({ row, onDelete: loadData })}
           onSelectionChange={handleSelectionChange}

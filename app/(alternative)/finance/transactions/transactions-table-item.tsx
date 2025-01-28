@@ -1,11 +1,11 @@
 import Image from 'next/image'
-import { Transaction } from './transactions-table'
+import { GeneratedCodeResponse } from '@/app/(default)/inventory/types'
 import { TransactionsProperties } from './transactions-properties'
 import { useFlyoutContext } from '@/app/flyout-context'
 import { useTransactionDetail } from './transaction-context'
 
 interface TransactionsTableItemProps {
-  transaction: Transaction
+  transaction: GeneratedCodeResponse
   onCheckboxChange: (id: number, checked: boolean) => void
   isSelected: boolean
 }
@@ -44,26 +44,21 @@ export default function TransactionsTableItem({ transaction, onCheckboxChange, i
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap md:w-1/2">
         <div className="flex items-center">
-          <div className="w-9 h-9 shrink-0 mr-2 sm:mr-3">
-            <button onClick={(e) => handleTransactionClick(e)} tabIndex={-1}>
-              <Image className="rounded-full" src={transaction.image} width={36} height={36} alt={transaction.name} />
-            </button>
-          </div>
           <div className="font-medium text-gray-800 dark:text-gray-100">
-            <button onClick={(e) => handleTransactionClick(e)}>{transaction.name}</button>
+            <button onClick={(e) => handleTransactionClick(e)}>{transaction.token}</button>
           </div>
         </div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-        <div className="text-left">{transaction.date}</div>
+        <div className="text-left">{transaction.token_type}</div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
         <div className="text-left">
-          <div className={`text-xs inline-flex font-medium rounded-full text-center px-2.5 py-1 ${statusColor(transaction.status)}`}>{transaction.status}</div>
+          <div className={`text-xs inline-flex font-medium rounded-full text-center px-2.5 py-1`}>{transaction.token_value}</div>
         </div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
-        <div className={`text-right font-medium ${amountColor(transaction.amount)}`}>{transaction.amount}</div>
+        <div className={`text-right font-medium`}>{transaction.max_count}</div>
       </td>
     </tr>
   )

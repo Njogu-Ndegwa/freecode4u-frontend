@@ -3,7 +3,7 @@
 import { StaticImageData } from 'next/image'
 import { useItemSelection } from '@/components/utils/use-item-selection'
 import TransactionsTableItem from './transactions-table-item'
-
+import { GeneratedCodeResponse } from '@/app/(default)/inventory/types'
 export interface Transaction {
   id: number
   image: StaticImageData
@@ -13,7 +13,7 @@ export interface Transaction {
   amount: string
 }
 
-export default function TransactionsTable({ transactions }: { transactions: Transaction[]}) {
+export default function TransactionsTable({ transactions }: { transactions: GeneratedCodeResponse[]}) {
   const {
     selectedItems,
     isAllSelected,
@@ -39,16 +39,16 @@ export default function TransactionsTable({ transactions }: { transactions: Tran
                   </div>
                 </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">Counterparty</div>
+                  <div className="font-semibold text-left">Token</div>
                 </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">Payment Date</div>
+                  <div className="font-semibold text-left">Token Type</div>
                 </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">Status</div>
+                  <div className="font-semibold text-left">Token Value</div>
                 </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-right">Amount</div>
+                  <div className="font-semibold text-right">Max Count</div>
                 </th>
               </tr>
             </thead>

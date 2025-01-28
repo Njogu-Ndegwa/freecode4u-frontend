@@ -1,23 +1,19 @@
 import { TableColumn } from '@/components/table/table'
 import { format } from 'date-fns';
 import { ItemInterface } from '../types'
-import { Pencil, Trash2, Plus, MoreHorizontal } from 'lucide-react'
+import Link from 'next/link';
 
 export const columns: TableColumn<ItemInterface>[] = [
-    {
-      header: 'ID',
-      accessor: 'id',
-      cellRenderer: (value: unknown, item: ItemInterface) => (
-        <div className="font-medium text-sky-600">{String(value)}</div>
-      )
-    },
     {
       header: 'Serial Number',
       accessor: 'serial_number',
       cellRenderer: (value: unknown, item: ItemInterface) => (
-        <div className="font-medium text-gray-800 dark:text-gray-100">
+        <Link 
+          href={`/inventory/items/activate/${item.id}`} // Assuming your route is /inventory/items/[id]
+          className="font-medium text-sky-600 hover:text-sky-700 hover:underline cursor-pointer"
+        >
           {String(value)}
-        </div>
+        </Link>
       )
     },
     {
@@ -26,6 +22,15 @@ export const columns: TableColumn<ItemInterface>[] = [
       cellRenderer: (value: unknown, item: ItemInterface) => (
         <div className="max-w-md truncate">
           {item.manufacturers?.name || '-'}
+        </div>
+      )
+    },
+    {
+      header: 'Fleet',
+      accessor: 'fleet',
+      cellRenderer: (value: unknown, item: ItemInterface) => (
+        <div className="max-w-md truncate">
+          {item.fleet?.name || '-'}
         </div>
       )
     },
@@ -83,11 +88,11 @@ export const dropdownOptions = [
     },
     {
         id: 1,
-        value: 'Assign to Agent'
+        value: 'Assign to Fleet'
     },
     {
         id: 2,
-        value: 'Re-assign Agent'
+        value: 'Re-assign Item Fleet'
     }
 ]
 

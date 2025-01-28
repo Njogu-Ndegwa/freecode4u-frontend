@@ -2,10 +2,11 @@
 
 import { createContext, useContext, useState } from 'react'
 import { Transaction } from './transactions-table'
+import { GeneratedCodeResponse } from '@/app/(default)/inventory/types'
 
 interface TransactionDetailContextProps {
-  transaction: Transaction | null
-  setTransaction: (transaction: Transaction | null) => void
+  transaction: GeneratedCodeResponse | null
+  setTransaction: (transaction: GeneratedCodeResponse | null) => void
 }
 
 const TransactionDetailContext = createContext<TransactionDetailContextProps | undefined>(undefined)
@@ -13,7 +14,7 @@ const TransactionDetailContext = createContext<TransactionDetailContextProps | u
 export const TransactionDetailProvider = ({ children }: {
   children: React.ReactNode
 }) => {
-  const [transaction, setTransaction] = useState<Transaction | null>(null)
+  const [transaction, setTransaction] = useState<GeneratedCodeResponse | null>(null)
   return (
     <TransactionDetailContext.Provider value={{ transaction, setTransaction }}>
       {children}

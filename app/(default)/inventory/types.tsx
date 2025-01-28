@@ -114,3 +114,94 @@ export interface ItemFormData {
   };
   // Add other fields as needed
 }
+
+
+export interface AssignItemsToFleetData {
+  fleet_id: number;
+  item_ids: number[];
+}
+
+export interface ItemAssignmentResponseInterface {
+  assigned_items: number[];  // Array of successfully assigned item IDs
+  errors: Array<{           // Detailed error information
+    item_id: number;
+    message: string;
+  }>;
+}
+
+
+
+export interface ItemReAssignmentResponseInterface {
+  reassigned_items: number[];  // Array of successfully assigned item IDs
+  errors: Array<{           // Detailed error information
+    item_id: number;
+    message: string;
+  }>;
+}
+
+export interface AssignItemToCustomerData {
+  customer_id: number;
+  item_id: number;
+}
+
+export interface CustomerAssignmentResponse {
+  detail: string;
+  item_id: number;
+  customer_id: number;
+}
+
+export interface AssignPaymentPlanToItemData {
+  item_id: number;
+  payment_plan_id: number;
+}
+
+export interface PaymentPlanAssignmentResponse {
+  detail: string;
+  item_id: number;
+  payment_plan_id: number;
+}
+
+export interface PaymentPlanInterface {
+  id: number;
+  name: string;
+  total_amount: string;
+  interval_type: string;
+  interval_amount: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface GenerateTokenRequest {
+  item_id: number;
+  token_type: 'ADD_TIME' | 'DISABLE_PAYG' | 'SET_TIME' | 'COUNTER_SYNC';
+  token_value: number;
+}
+
+export interface GenerateTokenResponse {
+  detail: string;
+  token: string;
+  token_type: string;
+  token_value: number;
+  max_count: number;
+}
+
+export interface GeneratedCodeResponse {
+  id: number;
+  item: number;
+  token: string;
+  token_value: number;
+  token_type: string | null;
+  max_count: number | null;
+  payment_message: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PaymentResponseInterface {
+  id: number;
+  payment_plan: PaymentPlanInterface;
+  amount_paid: string;
+  paid_at: string;
+  customer: CustomerInterface;
+  note: string;
+}
