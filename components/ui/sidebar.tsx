@@ -18,13 +18,13 @@ export default function Sidebar({
   const sidebar = useRef<HTMLDivElement>(null)
   const { sidebarOpen, setSidebarOpen } = useAppProvider()
   const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false)
-  const segments = useSelectedLayoutSegments()  
+  const segments = useSelectedLayoutSegments()
   const [breakpoint, setBreakpoint] = useState<string | undefined>(getBreakpoint())
   const expandOnly = !sidebarExpanded && (breakpoint === 'lg' || breakpoint === 'xl')
   const { canViewMenu } = useMenuVisibility();
   // close on click outside
   useEffect(() => {
-    const clickHandler = ({ target }: { target: EventTarget | null }): void => {      
+    const clickHandler = ({ target }: { target: EventTarget | null }): void => {
       if (!sidebar.current) return
       if (!sidebarOpen || sidebar.current.contains(target as Node)) return
       setSidebarOpen(false)
@@ -42,17 +42,17 @@ export default function Sidebar({
     document.addEventListener('keydown', keyHandler)
     return () => document.removeEventListener('keydown', keyHandler)
   })
-  
+
   const handleBreakpoint = () => {
-    setBreakpoint(getBreakpoint())      
+    setBreakpoint(getBreakpoint())
   }
-  
+
   useEffect(() => {
     window.addEventListener('resize', handleBreakpoint)
     return () => {
       window.removeEventListener('resize', handleBreakpoint)
     }
-  }, [breakpoint])    
+  }, [breakpoint])
 
   return (
     <div className={`min-w-fit ${sidebarExpanded ? 'sidebar-expanded' : ''}`}>
@@ -68,7 +68,7 @@ export default function Sidebar({
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
         aria-hidden="true"
-      />      
+      />
 
       {/* Sidebar */}
       <Transition
@@ -82,7 +82,7 @@ export default function Sidebar({
         enterTo="translate-x-0"
         leaveFrom="translate-x-0"
         leaveTo="-translate-x-full"
-      >      
+      >
         {/* Sidebar header */}
         <div className="flex justify-between mb-10 pr-3 sm:px-2">
           {/* Close button */}
@@ -175,181 +175,240 @@ export default function Sidebar({
               </SidebarLinkGroup>
               {/* E-Commerce */}
               {canViewMenu('ecommerce') && (
-              <SidebarLinkGroup open={segments.includes('ecommerce')}>
-                {(handleClick, open) => {
-                  return (
-                    <>
-                      <a
-                        href="#0"
-                        className={`block text-gray-800 dark:text-gray-100 truncate transition ${segments.includes('ecommerce') ? '' : 'hover:text-gray-900 dark:hover:text-white'
-                          }`}
-                        onClick={(e) => {
-                          e.preventDefault()
-                          expandOnly ? setSidebarExpanded(true) : handleClick()
-                        }}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <svg className={`shrink-0 fill-current ${segments.includes('ecommerce') ? 'text-violet-500' : 'text-gray-400 dark:text-gray-500'}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-                              <path d="M9 6.855A3.502 3.502 0 0 0 8 0a3.5 3.5 0 0 0-1 6.855v1.656L5.534 9.65a3.5 3.5 0 1 0 1.229 1.578L8 10.267l1.238.962a3.5 3.5 0 1 0 1.229-1.578L9 8.511V6.855ZM6.5 3.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm4.803 8.095c.005-.005.01-.01.013-.016l.012-.016a1.5 1.5 0 1 1-.025.032ZM3.5 11c.474 0 .897.22 1.171.563l.013.016.013.017A1.5 1.5 0 1 1 3.5 11Z" />
-                            </svg>
-                            <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                              E-Commerce
-                            </span>
+                <SidebarLinkGroup open={segments.includes('ecommerce')}>
+                  {(handleClick, open) => {
+                    return (
+                      <>
+                        <a
+                          href="#0"
+                          className={`block text-gray-800 dark:text-gray-100 truncate transition ${segments.includes('ecommerce') ? '' : 'hover:text-gray-900 dark:hover:text-white'
+                            }`}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            expandOnly ? setSidebarExpanded(true) : handleClick()
+                          }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <svg className={`shrink-0 fill-current ${segments.includes('ecommerce') ? 'text-violet-500' : 'text-gray-400 dark:text-gray-500'}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                                <path d="M9 6.855A3.502 3.502 0 0 0 8 0a3.5 3.5 0 0 0-1 6.855v1.656L5.534 9.65a3.5 3.5 0 1 0 1.229 1.578L8 10.267l1.238.962a3.5 3.5 0 1 0 1.229-1.578L9 8.511V6.855ZM6.5 3.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm4.803 8.095c.005-.005.01-.01.013-.016l.012-.016a1.5 1.5 0 1 1-.025.032ZM3.5 11c.474 0 .897.22 1.171.563l.013.016.013.017A1.5 1.5 0 1 1 3.5 11Z" />
+                              </svg>
+                              <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                E-Commerce
+                              </span>
+                            </div>
+                            {/* Icon */}
+                            <div className="flex shrink-0 ml-2">
+                              <svg
+                                className={`w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 ${open && 'rotate-180'}`}
+                                viewBox="0 0 12 12"
+                              >
+                                <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                              </svg>
+                            </div>
                           </div>
-                          {/* Icon */}
-                          <div className="flex shrink-0 ml-2">
-                            <svg
-                              className={`w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 ${open && 'rotate-180'}`}
-                              viewBox="0 0 12 12"
-                            >
-                              <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                            </svg>
-                          </div>
+                        </a>
+                        <div className="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                          <ul className={`pl-8 mt-1 ${!open && 'hidden'}`}>
+                            <li className="mb-1 last:mb-0">
+                              <SidebarLink href="/ecommerce/customers">
+                                <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                  Customers
+                                </span>
+                              </SidebarLink>
+                            </li>
+                            <li className="mb-1 last:mb-0">
+                              <SidebarLink href="/ecommerce/orders">
+                                <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                  Orders
+                                </span>
+                              </SidebarLink>
+                            </li>
+                            <li className="mb-1 last:mb-0">
+                              <SidebarLink href="/ecommerce/invoices">
+                                <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                  Invoices
+                                </span>
+                              </SidebarLink>
+                            </li>
+                            <li className="mb-1 last:mb-0">
+                              <SidebarLink href="/ecommerce/shop">
+                                <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                  Shop
+                                </span>
+                              </SidebarLink>
+                            </li>
+                            <li className="mb-1 last:mb-0">
+                              <SidebarLink href="/ecommerce/shop-2">
+                                <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                  Shop 2
+                                </span>
+                              </SidebarLink>
+                            </li>
+                            <li className="mb-1 last:mb-0">
+                              <SidebarLink href="/ecommerce/product">
+                                <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                  Single Product
+                                </span>
+                              </SidebarLink>
+                            </li>
+                            <li className="mb-1 last:mb-0">
+                              <SidebarLink href="/ecommerce/cart">
+                                <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                  Cart
+                                </span>
+                              </SidebarLink>
+                            </li>
+                            <li className="mb-1 last:mb-0">
+                              <SidebarLink href="/ecommerce/cart-2">
+                                <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                  Cart 2
+                                </span>
+                              </SidebarLink>
+                            </li>
+                            <li className="mb-1 last:mb-0">
+                              <SidebarLink href="/ecommerce/cart-3">
+                                <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                  Cart 3
+                                </span>
+                              </SidebarLink>
+                            </li>
+                            <li className="mb-1 last:mb-0">
+                              <SidebarLink href="/ecommerce/pay">
+                                <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                  Pay
+                                </span>
+                              </SidebarLink>
+                            </li>
+                          </ul>
                         </div>
-                      </a>
-                      <div className="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                        <ul className={`pl-8 mt-1 ${!open && 'hidden'}`}>
-                          <li className="mb-1 last:mb-0">
-                            <SidebarLink href="/ecommerce/customers">
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Customers
-                              </span>
-                            </SidebarLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
-                            <SidebarLink href="/ecommerce/orders">
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Orders
-                              </span>
-                            </SidebarLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
-                            <SidebarLink href="/ecommerce/invoices">
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Invoices
-                              </span>
-                            </SidebarLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
-                            <SidebarLink href="/ecommerce/shop">
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Shop
-                              </span>
-                            </SidebarLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
-                            <SidebarLink href="/ecommerce/shop-2">
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Shop 2
-                              </span>
-                            </SidebarLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
-                            <SidebarLink href="/ecommerce/product">
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Single Product
-                              </span>
-                            </SidebarLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
-                            <SidebarLink href="/ecommerce/cart">
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Cart
-                              </span>
-                            </SidebarLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
-                            <SidebarLink href="/ecommerce/cart-2">
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Cart 2
-                              </span>
-                            </SidebarLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
-                            <SidebarLink href="/ecommerce/cart-3">
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Cart 3
-                              </span>
-                            </SidebarLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
-                            <SidebarLink href="/ecommerce/pay">
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Pay
-                              </span>
-                            </SidebarLink>
-                          </li>
-                        </ul>
-                      </div>
-                    </>
-                  )
-                }}
-              </SidebarLinkGroup> 
+                      </>
+                    )
+                  }}
+                </SidebarLinkGroup>
               )}
-               {canViewMenu('inventory') && (
-              <SidebarLinkGroup open={segments.includes('inventory')}>
-                {(handleClick, open) => {
-                  return (
-                    <>
-                      <a
-                        href="#0"
-                        className={`block text-gray-800 dark:text-gray-100 truncate transition ${segments.includes('inventory') ? '' : 'hover:text-gray-900 dark:hover:text-white'
-                          }`}
-                        onClick={(e) => {
-                          e.preventDefault()
-                          expandOnly ? setSidebarExpanded(true) : handleClick()
-                        }}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <svg className={`shrink-0 fill-current ${segments.includes('inventory') ? 'text-violet-500' : 'text-gray-400 dark:text-gray-500'}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-                              <path d="M9 6.855A3.502 3.502 0 0 0 8 0a3.5 3.5 0 0 0-1 6.855v1.656L5.534 9.65a3.5 3.5 0 1 0 1.229 1.578L8 10.267l1.238.962a3.5 3.5 0 1 0 1.229-1.578L9 8.511V6.855ZM6.5 3.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm4.803 8.095c.005-.005.01-.01.013-.016l.012-.016a1.5 1.5 0 1 1-.025.032ZM3.5 11c.474 0 .897.22 1.171.563l.013.016.013.017A1.5 1.5 0 1 1 3.5 11Z" />
-                            </svg>
-                            <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                              Inventory
-                            </span>
+              {canViewMenu('inventory') && (
+                <SidebarLinkGroup open={segments.includes('inventory')}>
+                  {(handleClick, open) => {
+                    return (
+                      <>
+                        <a
+                          href="#0"
+                          className={`block text-gray-800 dark:text-gray-100 truncate transition ${segments.includes('inventory') ? '' : 'hover:text-gray-900 dark:hover:text-white'
+                            }`}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            expandOnly ? setSidebarExpanded(true) : handleClick()
+                          }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <svg className={`shrink-0 fill-current ${segments.includes('inventory') ? 'text-violet-500' : 'text-gray-400 dark:text-gray-500'}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                                <path d="M9 6.855A3.502 3.502 0 0 0 8 0a3.5 3.5 0 0 0-1 6.855v1.656L5.534 9.65a3.5 3.5 0 1 0 1.229 1.578L8 10.267l1.238.962a3.5 3.5 0 1 0 1.229-1.578L9 8.511V6.855ZM6.5 3.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm4.803 8.095c.005-.005.01-.01.013-.016l.012-.016a1.5 1.5 0 1 1-.025.032ZM3.5 11c.474 0 .897.22 1.171.563l.013.016.013.017A1.5 1.5 0 1 1 3.5 11Z" />
+                              </svg>
+                              <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                Inventory
+                              </span>
+                            </div>
+                            {/* Icon */}
+                            <div className="flex shrink-0 ml-2">
+                              <svg
+                                className={`w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 ${open && 'rotate-180'}`}
+                                viewBox="0 0 12 12"
+                              >
+                                <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                              </svg>
+                            </div>
                           </div>
-                          {/* Icon */}
-                          <div className="flex shrink-0 ml-2">
-                            <svg
-                              className={`w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 ${open && 'rotate-180'}`}
-                              viewBox="0 0 12 12"
-                            >
-                              <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                            </svg>
-                          </div>
+                        </a>
+                        <div className="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                          <ul className={`pl-8 mt-1 ${!open && 'hidden'}`}>
+                            <li className="mb-1 last:mb-0">
+                              <SidebarLink href="/inventory/manufacturers">
+                                <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                  Manufacturers
+                                </span>
+                              </SidebarLink>
+                            </li>
+                            <li className="mb-1 last:mb-0">
+                              <SidebarLink href="/inventory/fleets">
+                                <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                  Fleets
+                                </span>
+                              </SidebarLink>
+                            </li>
+                            <li className="mb-1 last:mb-0">
+                              <SidebarLink href="/inventory/items">
+                                <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                  Items
+                                </span>
+                              </SidebarLink>
+                            </li>
+                          </ul>
                         </div>
-                      </a>
-                      <div className="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                        <ul className={`pl-8 mt-1 ${!open && 'hidden'}`}>
-                          <li className="mb-1 last:mb-0">
-                            <SidebarLink href="/inventory/manufacturers">
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Manufacturers
+                      </>
+                    )
+                  }}
+                </SidebarLinkGroup>
+              )}
+
+              {/* Community */}
+              {canViewMenu('inventory') && (
+                <SidebarLinkGroup open={segments.includes('payments')}>
+                  {(handleClick, open) => {
+                    return (
+                      <>
+                        <a
+                          href="#0"
+                          className={`block text-gray-800 dark:text-gray-100 truncate transition ${segments.includes('payments') ? '' : 'hover:text-gray-900 dark:hover:text-white'
+                            }`}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            expandOnly ? setSidebarExpanded(true) : handleClick()
+                          }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <svg className={`shrink-0 fill-current ${segments.includes('payments') ? 'text-violet-500' : 'text-gray-400 dark:text-gray-500'}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                                <path d="M12 1a1 1 0 1 0-2 0v2a3 3 0 0 0 3 3h2a1 1 0 1 0 0-2h-2a1 1 0 0 1-1-1V1ZM1 10a1 1 0 1 0 0 2h2a1 1 0 0 1 1 1v2a1 1 0 1 0 2 0v-2a3 3 0 0 0-3-3H1ZM5 0a1 1 0 0 1 1 1v2a3 3 0 0 1-3 3H1a1 1 0 0 1 0-2h2a1 1 0 0 0 1-1V1a1 1 0 0 1 1-1ZM12 13a1 1 0 0 1 1-1h2a1 1 0 1 0 0-2h-2a3 3 0 0 0-3 3v2a1 1 0 1 0 2 0v-2Z" />
+                              </svg>
+                              <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                Payments
                               </span>
-                            </SidebarLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
-                            <SidebarLink href="/inventory/fleets">
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Fleets
-                              </span>
-                            </SidebarLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
-                            <SidebarLink href="/inventory/items">
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Items
-                              </span>
-                            </SidebarLink>
-                          </li>
-                        </ul>
-                      </div>
-                    </>
-                  )
-                }}
-              </SidebarLinkGroup> 
+                            </div>
+                            {/* Icon */}
+                            <div className="flex shrink-0 ml-2">
+                              <svg
+                                className={`w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 ${open && 'rotate-180'}`}
+                                viewBox="0 0 12 12"
+                              >
+                                <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                              </svg>
+                            </div>
+                          </div>
+                        </a>
+                        <div className="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                          <ul className={`pl-8 mt-1 ${!open && 'hidden'}`}>
+                            <li className="mb-1 last:mb-0">
+                              <SidebarLink href="/payments/payment-plans">
+                                <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                  Payment Plans
+                                </span>
+                              </SidebarLink>
+                            </li>
+                            <li className="mb-1 last:mb-0">
+                              <SidebarLink href="/payments/payment-history">
+                                <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                  Payment History
+                                </span>
+                              </SidebarLink>
+                            </li>
+                          </ul>
+                        </div>
+                      </>
+                    )
+                  }}
+                </SidebarLinkGroup>
               )}
               {/* Community */}
               <SidebarLinkGroup open={segments.includes('community')}>
@@ -675,7 +734,7 @@ export default function Sidebar({
                 <SidebarLink href="/campaigns">
                   <div className="flex items-center">
                     <svg className={`shrink-0 fill-current ${segments.includes('campaigns') ? 'text-violet-500' : 'text-gray-400 dark:text-gray-500'}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-                        <path d="M6.649 1.018a1 1 0 0 1 .793 1.171L6.997 4.5h3.464l.517-2.689a1 1 0 1 1 1.964.378L12.498 4.5h2.422a1 1 0 0 1 0 2h-2.807l-.77 4h2.117a1 1 0 1 1 0 2h-2.501l-.517 2.689a1 1 0 1 1-1.964-.378l.444-2.311H5.46l-.517 2.689a1 1 0 1 1-1.964-.378l.444-2.311H1a1 1 0 1 1 0-2h2.807l.77-4H2.46a1 1 0 0 1 0-2h2.5l.518-2.689a1 1 0 0 1 1.17-.793ZM9.307 10.5l.77-4H6.612l-.77 4h3.464Z" />
+                      <path d="M6.649 1.018a1 1 0 0 1 .793 1.171L6.997 4.5h3.464l.517-2.689a1 1 0 1 1 1.964.378L12.498 4.5h2.422a1 1 0 0 1 0 2h-2.807l-.77 4h2.117a1 1 0 1 1 0 2h-2.501l-.517 2.689a1 1 0 1 1-1.964-.378l.444-2.311H5.46l-.517 2.689a1 1 0 1 1-1.964-.378l.444-2.311H1a1 1 0 1 1 0-2h2.807l.77-4H2.46a1 1 0 0 1 0-2h2.5l.518-2.689a1 1 0 0 1 1.17-.793ZM9.307 10.5l.77-4H6.612l-.77 4h3.464Z" />
                     </svg>
                     <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
                       Campaigns
@@ -1005,7 +1064,7 @@ export default function Sidebar({
                           <div className="flex items-center">
                             <svg className={`shrink-0 fill-current ${segments.includes('components-library') ? 'text-violet-500' : 'text-gray-400 dark:text-gray-500'}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                               <path d="M.06 10.003a1 1 0 0 1 1.948.455c-.019.08.01.152.078.19l5.83 3.333c.053.03.116.03.168 0l5.83-3.333a.163.163 0 0 0 .078-.188 1 1 0 0 1 1.947-.459 2.161 2.161 0 0 1-1.032 2.384l-5.83 3.331a2.168 2.168 0 0 1-2.154 0l-5.83-3.331a2.162 2.162 0 0 1-1.032-2.382Zm7.856-7.981-5.83 3.332a.17.17 0 0 0 0 .295l5.828 3.33c.054.031.118.031.17.002l5.83-3.333a.17.17 0 0 0 0-.294L8.085 2.023a.172.172 0 0 0-.17-.001ZM9.076.285l5.83 3.332c1.458.833 1.458 2.935 0 3.768l-5.83 3.333c-.667.38-1.485.38-2.153-.001l-5.83-3.332c-1.457-.833-1.457-2.935 0-3.767L6.925.285a2.173 2.173 0 0 1 2.15 0Z" />
-                            </svg>                            
+                            </svg>
                             <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
                               Components
                             </span>
@@ -1131,7 +1190,7 @@ export default function Sidebar({
               <span className="sr-only">Expand / collapse sidebar</span>
               <svg className="shrink-0 fill-current text-gray-400 dark:text-gray-500 sidebar-expanded:rotate-180" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                 <path d="M15 16a1 1 0 0 1-1-1V1a1 1 0 1 1 2 0v14a1 1 0 0 1-1 1ZM8.586 7H1a1 1 0 1 0 0 2h7.586l-2.793 2.793a1 1 0 1 0 1.414 1.414l4.5-4.5A.997.997 0 0 0 12 8.01M11.924 7.617a.997.997 0 0 0-.217-.324l-4.5-4.5a1 1 0 0 0-1.414 1.414L8.586 7M12 7.99a.996.996 0 0 0-.076-.373Z" />
-              </svg>              
+              </svg>
             </button>
           </div>
         </div>

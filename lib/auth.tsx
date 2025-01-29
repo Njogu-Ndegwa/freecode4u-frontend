@@ -91,11 +91,6 @@ export const useMenuVisibility = () => {
   };
   type UserType = keyof typeof menuPermissions;
   const canViewMenu = (menuId: string): boolean => {
-    console.log(menuId, "Menu Id")
-    console.log(userType, "---88--")
-    console.log(menuPermissions[userType as UserType])
-    console.log(menuPermissions[userType as keyof typeof menuPermissions], "----")
-    console.log(menuPermissions[userType as keyof typeof menuPermissions]?.includes(menuId), "---")
     return menuPermissions[userType as keyof typeof menuPermissions]?.includes(menuId) || false;
   };
 
