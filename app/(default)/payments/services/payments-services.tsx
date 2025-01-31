@@ -2,12 +2,10 @@ import { authenticatedFetch } from "@/lib/utils";
 import { DistributorPaymentInterface, PaymentPlanInterface, DeletePaymentPlanResponse, PaymentPlanFormData } from "../types";
 
 
-export const getDistributorPayments = async (
-    distributorId: number
-  ): Promise<DistributorPaymentInterface[]> => {
+export const getPayments = async (): Promise<DistributorPaymentInterface[]> => {
     try {
       return await authenticatedFetch<DistributorPaymentInterface[]>(
-        `/api/distributors/${distributorId}/payments/`
+        `/api/payments/`
       );
     } catch (error) {
       console.error('Error fetching distributor payments:', error);
